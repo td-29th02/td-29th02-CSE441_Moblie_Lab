@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#E3F2FD"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#673AB7"
+        android:text="Bai8_Intent_camera"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <ImageView
+        android:id="@+id/myimg"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="#FFFFFF"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_gallery"
+        android:contentDescription="Captured Image" />
+
+    <!-- Nút camera hình tròn -->
+    <ImageButton
+        android:id="@+id/btncapture"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/circle_camera_button"
+        android:scaleType="centerInside"
+        android:padding="10dp"
+        android:contentDescription="Capture Photo" />
+
+    <TextView
+        android:id="@+id/instruction_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="Nhấn vào camera để chụp ảnh"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:gravity="center" />
+
+</LinearLayout>
