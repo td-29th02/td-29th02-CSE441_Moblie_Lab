@@ -1,172 +1,109 @@
 package com.example.sqlite;
 
-import android.annotation.SuppressLint;
+import androidx.appcompat.app.AppCompatActivity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String DATABASE_NAME = "qlsach.db";
-    private SQLiteDatabase database = null;
-    private ListView lv;
-    private ArrayList<String> mylist;
-    private ArrayAdapter<String> adapter;
+    String DB_PATH_SUFFIX = "/databases/";
+    SQLiteDatabase database = null;
+    String DATABASE_NAME = "qlsach.db";
+    ListView lv;
+    ArrayList<String> mylist;
+    ArrayAdapter<String> myadapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        // TODO: Thêm copy CSDL từ assets vào thư mục Databases
+        processCopy();
 
-        // Khởi tạo views
-        initViews();
+        // TODO: CSDL tên dữ liệu
+        database = openOrCreateDatabase("qlsach.db", MODE_PRIVATE, null);
 
-        // Tạo database và bảng
-        createDatabase();
-
-        // Load dữ liệu
-        loadData();
-    }
-
-    private void initViews() {
+        // Tạo ListView
         lv = findViewById(R.id.lv);
         mylist = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mylist);
-        lv.setAdapter(adapter);
+        myadapter = new ArrayAdapter<>(MainActivity.this,
+                android.R.layout.simple_list_item_1, mylist);
+        lv.setAdapter(myadapter);
+
+        // Truy vấn CSDL và cập nhật hiển thị trên listview
+        Cursor c = database.query("tbsach", null, null, null, null, null, null);
+        c.moveToFirst();
+        String data = "";
+        while (!c.isAfterLast()) {
+            data = c.getString(0) + "-" + c.getString(1) + "-" + c.getString(2);
+            mylist.add(data);
+            c.moveToNext();
+        }
+        c.close();
+        myadapter.notifyDataSetChanged();
     }
 
-    private void createDatabase() {
+    private void processCopy() {
+        // Tạo private app
+        File dbFile = getDatabasePath(DATABASE_NAME);
+        if (!dbFile.exists()) {
+            try {
+                CopyDataBaseFromAsset();
+                Toast.makeText(this, "Copying success from Assets folder",
+                        Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private String getDatabasePath() {
+        return getApplicationInfo().dataDir + DB_PATH_SUFFIX + DATABASE_NAME;
+    }
+
+    public void CopyDataBaseFromAsset() {
+        // TODO: Auto-generated method stub
         try {
-            // Mở hoặc tạo database
-            database = openOrCreateDatabase(DATABASE_NAME, MODE_PRIVATE, null);
-            Log.d("MainActivity", "Database created/opened successfully");
+            InputStream myInput;
+            myInput = getAssets().open(DATABASE_NAME);
 
-            // Tạo bảng tbsach
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS tbsach (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "tensach TEXT NOT NULL, " +
-                    "tacgia TEXT NOT NULL, " +
-                    "namxb INTEGER DEFAULT 2023)";
+            // Path to the just created empty db
+            String outFileName = getDatabasePath();
 
-            database.execSQL(createTableSQL);
-            Log.d("MainActivity", "Table tbsach created successfully");
-
-            // Kiểm tra xem đã có dữ liệu chưa
-            Cursor cursor = database.rawQuery("SELECT COUNT(*) FROM tbsach", null);
-            cursor.moveToFirst();
-            int count = cursor.getInt(0);
-            cursor.close();
-
-            // Nếu chưa có dữ liệu, thêm dữ liệu mẫu
-            if (count == 0) {
-                insertSampleData();
+            // if the path doesn't exist first, create it
+            File f = new File(getApplicationInfo().dataDir + DB_PATH_SUFFIX);
+            if (!f.exists()) {
+                f.mkdir();
             }
 
-            Toast.makeText(this, "Database setup completed!", Toast.LENGTH_SHORT).show();
+            // Open the empty db as the output stream
+            OutputStream myOutput = new FileOutputStream(outFileName);
 
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error creating database: " + e.getMessage());
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            // Transfer bytes from the inputfile to the outputfile
+            // Truyền bytes dữ liệu từ input đến output
+            int size = myInput.available();
+            byte[] buffer = new byte[size];
+            myInput.read(buffer);
+            myOutput.write(buffer);
+
+            // Close the streams
+            myOutput.flush();
+            myOutput.close();
+            myInput.close();
+        } catch (IOException e) {
+            // TODO: Auto-generated catch block
             e.printStackTrace();
-        }
-    }
-
-    private void insertSampleData() {
-        try {
-            // Thêm dữ liệu mẫu
-            String[] insertSQL = {
-                    "INSERT INTO tbsach(tensach, tacgia, namxb) VALUES('Lập trình Android cơ bản', 'Nguyễn Văn A', 2023)",
-                    "INSERT INTO tbsach(tensach, tacgia, namxb) VALUES('Java từ cơ bản đến nâng cao', 'Trần Văn B', 2022)",
-                    "INSERT INTO tbsach(tensach, tacgia, namxb) VALUES('Cơ sở dữ liệu SQLite', 'Lê Thị C', 2024)",
-                    "INSERT INTO tbsach(tensach, tacgia, namxb) VALUES('Thiết kế giao diện Android', 'Phạm Văn D', 2023)",
-                    "INSERT INTO tbsach(tensach, tacgia, namxb) VALUES('Kotlin cho người mới bắt đầu', 'Hoàng Thị E', 2024)"
-            };
-
-            for (String sql : insertSQL) {
-                database.execSQL(sql);
-            }
-
-            Log.d("MainActivity", "Sample data inserted successfully");
-            Toast.makeText(this, "Đã thêm dữ liệu mẫu", Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error inserting sample data: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void loadData() {
-        if (database == null) {
-            Toast.makeText(this, "Database not available", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            // Clear danh sách cũ
-            mylist.clear();
-
-            // Truy vấn dữ liệu từ bảng tbsach
-            Cursor cursor = database.query("tbsach", null, null, null, null, null, null);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    // Lấy dữ liệu từ các cột
-                    @SuppressLint("Range")
-                    String id = cursor.getString(cursor.getColumnIndex("id"));
-                    @SuppressLint("Range")
-                    String tensach = cursor.getString(cursor.getColumnIndex("tensach"));
-                    @SuppressLint("Range")
-                    String tacgia = cursor.getString(cursor.getColumnIndex("tacgia"));
-                    @SuppressLint("Range")
-                    String namxb = cursor.getString(cursor.getColumnIndex("namxb"));
-
-                    String data = id + " - " + tensach + " - " + tacgia + " (" + namxb + ")";
-                    mylist.add(data);
-
-                } while (cursor.moveToNext());
-
-                cursor.close();
-                adapter.notifyDataSetChanged();
-
-                Toast.makeText(this, "Đã tải " + mylist.size() + " cuốn sách", Toast.LENGTH_SHORT).show();
-                Log.d("MainActivity", "Loaded " + mylist.size() + " records");
-
-            } else {
-                Toast.makeText(this, "Không có dữ liệu", Toast.LENGTH_SHORT).show();
-                if (cursor != null) cursor.close();
-            }
-
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error loading data: " + e.getMessage());
-            Toast.makeText(this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (database != null && database.isOpen()) {
-            database.close();
-            Log.d("MainActivity", "Database closed");
         }
     }
 }
