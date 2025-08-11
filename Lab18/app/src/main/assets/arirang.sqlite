@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Tuan Dung/Downloads/DB.Browser.for.SQLite-v3.13.1-win64/arirang.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1288"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="ArirangSongList" custom_title="0" dock_id="2" table="4,15:mainArirangSongList"/><dock_state state="000000ff00000000fd00000001000000020000024900000213fc0100000002fb000000160064006f0063006b00420072006f00770073006500310100000000000002490000000000000000fb000000160064006f0063006b00420072006f00770073006500320100000000ffffffff0000011800ffffff000002490000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">-- Tạo bảng ArirangSongList
+CREATE TABLE ArirangSongList (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    TENBH TEXT NOT NULL,
+    MABH TEXT NOT NULL UNIQUE,
+    LOIBAIHAT TEXT,
+    TACGIA TEXT,
+    THELOAI TEXT,
+    YEUTHICH INTEGER DEFAULT 0
+);
+
+-- Thêm dữ liệu mẫu cho ứng dụng Karaoke
+INSERT INTO ArirangSongList (TENBH, MABH, LOIBAIHAT, TACGIA, THELOAI, YEUTHICH) VALUES 
+('Chén Đắng', '52300', 'Một ngày anh nhớ, nhớ bóng hình em, trái tim anh đau buồn vì em xa rời...', 'Trương Lê Sơn', 'Nhạc Trữ Tình', 1),
+('Em Là Ai Tôi Là Ai', '52301', 'Em là ai mà khiến anh say mê, tôi là ai mà em không biết...', 'Nguyễn Văn Chung', 'Nhạc Trẻ', 0),
+('Anh Không Đòi Quà', '52302', 'Anh không đòi quà sinh nhật, chỉ cần em bên anh thôi...', 'Vương Anh Tú', 'Nhạc Trẻ', 1),
+('Có Chăng', '52303', 'Có chăng một ngày mai, em sẽ quay về bên anh...', 'Trịnh Thăng Bình', 'Ballad', 0),
+('Lạc Trôi', '52304', 'Ngày xưa có một chàng trai tên là Sơn Tùng, lạc trôi trong tình yêu...', 'Sơn Tùng M-TP', 'Pop', 1),
+('Buồn Của Anh', '52305', 'Buồn của anh sâu lắm em ơi, như biển cả mênh mông...', 'Đức Phúc', 'Ballad', 0),
+('Ghen Cô Vy', '52306', 'Ghen cô vy corona virus, rửa tay kỹ khẩu trang lên...', 'Khắc Hưng', 'Nhạc Chế', 1),
+('Níu Duyên', '52307', 'Anh cứ mãi níu duyên với em, dù biết rằng tình này khó thành...', 'Lê Bảo Bình', 'Nhạc Trữ Tình', 0),
+('Yêu Đơn Phương', '52308', 'Yêu đơn phương thật khổ đau, một mình anh chịu nỗi đau này...', 'Nguyễn Đình Vũ', 'Ballad', 1),
+('Có Hẹn Với Thanh Xuân', '52309', 'Có hẹn với thanh xuân trong những ngày tháng ấy...', 'Monstar', 'Nhạc Trẻ', 0),
+('Người Ấy', '52310', 'Người ấy có đôi mắt trong veo, như làn nước xanh xanh...', 'Trịnh Thăng Bình', 'Pop', 1),
+('3107', '52311', 'Ba một không bảy, ngày anh gặp em đầu tiên...', 'W/n ft. Duongg', 'Rap', 0),
+('Sao Em Vô Tình', '52312', 'Sao em vô tình với anh thế, để anh một mình khóc trong đêm...', 'Thanh Hưng', 'Nhạc Trữ Tình', 1),
+('Hôm Nay Tôi Buồn', '52313', 'Hôm nay tôi buồn tôi không muốn nói chuyện với ai...', 'Phùng Khánh Linh', 'Indie', 0),
+('Nơi Này Có Anh', '52314', 'Nơi này có anh, có những kỷ niệm về em...', 'Sơn Tùng M-TP', 'Pop', 1);</sql><current_tab id="0"/></tab_sql></sqlb_project>
